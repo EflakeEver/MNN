@@ -1,5 +1,5 @@
 PODS:
-  - MNN (1.0.0)
+  - MNN (0.1.1)
 
 DEPENDENCIES:
   - MNN (from `../../`)
@@ -9,8 +9,8 @@ EXTERNAL SOURCES:
     :path: "../../"
 
 SPEC CHECKSUMS:
-  MNN: 31075cbcadf73e96c1bf29cccc97e4ef131e0650
+  MNN: 4fdc9ca9e00ae2f7a326580c6c79cf7b8f290d7f
 
 PODFILE CHECKSUM: b0491e2fa8f04fdaec2683a1c6c9de3a1d483842
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.8.4

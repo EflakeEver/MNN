@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2090C1FE2540355800D33C02 /* 4.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 2090C1FD2540355800D33C02 /* 4.bmp */; };
+		20AA02A8253FC8B900391FF2 /* resnet50_sqsh_v2001.onnx.mnn in Resources */ = {isa = PBXBuildFile; fileRef = 20AA02A6253EE44D00391FF2 /* resnet50_sqsh_v2001.onnx.mnn */; };
+		20AA02B1253FFECA00391FF2 /* 1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 20AA02AF253FFECA00391FF2 /* 1.jpg */; };
+		20AA02B2253FFECA00391FF2 /* 2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 20AA02B0253FFECA00391FF2 /* 2.jpg */; };
+		20AA02B52540012500391FF2 /* 3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 20AA02B42540012500391FF2 /* 3.jpg */; };
 		922CC9BE2206B7DC0085D404 /* synset_words.txt in Resources */ = {isa = PBXBuildFile; fileRef = 922CC9B92206B7DC0085D404 /* synset_words.txt */; };
 		922CC9BF2206B7DC0085D404 /* testcat.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 922CC9BA2206B7DC0085D404 /* testcat.jpg */; };
 		922CC9C02206B7DC0085D404 /* squeezenet.txt in Resources */ = {isa = PBXBuildFile; fileRef = 922CC9BC2206B7DC0085D404 /* squeezenet.txt */; };
@@ -27,6 +32,11 @@
 
 /* Begin PBXFileReference section */
 		19D6949C3BE113930E7EB826 /* libPods-simple.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-simple.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2090C1FD2540355800D33C02 /* 4.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = 4.bmp; sourceTree = "<group>"; };
+		20AA02A6253EE44D00391FF2 /* resnet50_sqsh_v2001.onnx.mnn */ = {isa = PBXFileReference; lastKnownFileType = file; name = resnet50_sqsh_v2001.onnx.mnn; path = ../../android/app/src/main/assets/resnet50_sqsh_v2001.onnx.mnn; sourceTree = "<group>"; };
+		20AA02AF253FFECA00391FF2 /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
+		20AA02B0253FFECA00391FF2 /* 2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 2.jpg; sourceTree = "<group>"; };
+		20AA02B42540012500391FF2 /* 3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 3.jpg; sourceTree = "<group>"; };
 		443959A142C9F5A9260064A1 /* libPods-playground.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-playground.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		78072E65338A363D5816A269 /* Pods-simple.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-simple.release.xcconfig"; path = "Pods/Target Support Files/Pods-simple/Pods-simple.release.xcconfig"; sourceTree = "<group>"; };
 		823F14839C64B7FBF3FE2122 /* Pods-simple.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-simple.debug.xcconfig"; path = "Pods/Target Support Files/Pods-simple/Pods-simple.debug.xcconfig"; sourceTree = "<group>"; };
@@ -91,6 +101,11 @@
 		922CC9B82206B7DC0085D404 /* MobileNet */ = {
 			isa = PBXGroup;
 			children = (
+				2090C1FD2540355800D33C02 /* 4.bmp */,
+				20AA02AF253FFECA00391FF2 /* 1.jpg */,
+				20AA02B0253FFECA00391FF2 /* 2.jpg */,
+				20AA02B42540012500391FF2 /* 3.jpg */,
+				20AA02A6253EE44D00391FF2 /* resnet50_sqsh_v2001.onnx.mnn */,
 				AEB7BD4622365B220030252F /* mobilenet_v2_1.0_224.tflite.mnn */,
 				AEB7BD4522365B220030252F /* mobilenet_v2.caffe.mnn */,
 				922CC9B92206B7DC0085D404 /* synset_words.txt */,
@@ -214,14 +229,19 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20AA02A8253FC8B900391FF2 /* resnet50_sqsh_v2001.onnx.mnn in Resources */,
 				922CC9BF2206B7DC0085D404 /* testcat.jpg in Resources */,
 				AEB7BD4722365B220030252F /* mobilenet_v2.caffe.mnn in Resources */,
 				AEA46E6222365A8000F80F59 /* squeezenet_v1.1.caffe.mnn in Resources */,
 				922CC9C02206B7DC0085D404 /* squeezenet.txt in Resources */,
+				20AA02B52540012500391FF2 /* 3.jpg in Resources */,
+				2090C1FE2540355800D33C02 /* 4.bmp in Resources */,
 				AE2CFE2B21FFE73B0053943C /* LaunchScreen.storyboard in Resources */,
 				AE2CFE2821FFE73B0053943C /* Assets.xcassets in Resources */,
 				AEB7BD4822365B220030252F /* mobilenet_v2_1.0_224.tflite.mnn in Resources */,
 				922CC9BE2206B7DC0085D404 /* synset_words.txt in Resources */,
+				20AA02B2253FFECA00391FF2 /* 2.jpg in Resources */,
+				20AA02B1253FFECA00391FF2 /* 1.jpg in Resources */,
 				AE2CFE2621FFE7390053943C /* Main.storyboard in Resources */,
 				922CC9C12206B7DC0085D404 /* squeezenet.jpg in Resources */,
 			);
@@ -422,7 +442,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XY2UBJY3BR;
 				INFOPLIST_FILE = playground/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -441,7 +461,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XY2UBJY3BR;
 				INFOPLIST_FILE = playground/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (

@@ -53,7 +53,7 @@ static int CompareElements(const LabeledElement *a, const LabeledElement *b) {
     if (!_net || !_session) {
         return nil;
     }
-
+    
     // run
     NSTimeInterval begin = NSDate.timeIntervalSinceReferenceDate;
     // you should set input data for each inference
@@ -69,7 +69,7 @@ static int CompareElements(const LabeledElement *a, const LabeledElement *b) {
         }
     }
     NSTimeInterval cost = NSDate.timeIntervalSinceReferenceDate - begin;
-
+    
     // result
     MNN::Tensor *output = _net->getSessionOutput(_session, nullptr);
     MNN::Tensor copy(output);
@@ -81,7 +81,7 @@ static int CompareElements(const LabeledElement *a, const LabeledElement *b) {
         objects[i].index = i;
     }
     qsort(objects, 1000, sizeof(objects[0]), (int (*)(const void *, const void *))CompareElements);
-
+    
     // to string
     NSString *string = @"";
     for (int i = 0; i < 3; i++) {
@@ -110,9 +110,12 @@ static int CompareElements(const LabeledElement *a, const LabeledElement *b) {
         NSString *labels  = [[NSBundle mainBundle] pathForResource:@"synset_words" ofType:@"txt"];
         NSString *lines   = [NSString stringWithContentsOfFile:labels encoding:NSUTF8StringEncoding error:nil];
         self.labels       = [lines componentsSeparatedByString:@"\n"];
-        self.defaultImage = [UIImage imageNamed:@"testcat.jpg"];
-
-        NSString *model = [[NSBundle mainBundle] pathForResource:@"mobilenet_v2.caffe" ofType:@"mnn"];
+        //        self.defaultImage = [UIImage imageNamed:@"testcat.jpg"];
+        //        self.defaultImage = [UIImage imageNamed:@"1.jpg"];
+        //        self.defaultImage = [UIImage imageNamed:@"2.jpg"];
+        self.defaultImage = [UIImage imageNamed:@"4.bmp"];
+        //        NSString *model = [[NSBundle mainBundle] pathForResource:@"mobilenet_v2.caffe" ofType:@"mnn"];
+        NSString *model = [[NSBundle mainBundle] pathForResource:@"resnet50_sqsh_v2001.onnx" ofType:@"mnn"];
         _net            = std::shared_ptr<MNN::Interpreter>(MNN::Interpreter::createFromFile(model.UTF8String));
     }
     return self;
@@ -125,23 +128,32 @@ static int CompareElements(const LabeledElement *a, const LabeledElement *b) {
     {
         CGColorSpaceRef colorSpace = CGImageGetColorSpace(image.CGImage);
         CGContextRef contextRef    = CGBitmapContextCreate(rgba, w, h, 8, w * 4, colorSpace,
-                                                        kCGImageAlphaNoneSkipLast | kCGBitmapByteOrderDefault);
+                                                           kCGImageAlphaNoneSkipLast | kCGBitmapByteOrderDefault);
         CGContextDrawImage(contextRef, CGRectMake(0, 0, w, h), image.CGImage);
         CGContextRelease(contextRef);
     }
+    
+    //    const float means[3]   = {103.94f, 116.78f, 123.68f};
+    //    const float normals[3] = {0.017f, 0.017f, 0.017f};
+//        const float means[3]   = {123.68f, 116.779f, 103.939f};
+    const float means[3]   = {103.939f, 116.779f, 123.68f};
 
-    const float means[3]   = {103.94f, 116.78f, 123.68f};
-    const float normals[3] = {0.017f, 0.017f, 0.017f};
+    //    const float normals[3] = {0.229f, 0.224f, 0.225f};
+    //    1/(std*255)
+//    const float normals[3] = {0.01712475383166367f, 0.01750700280112045f, 0.017429193899782133f};
+    const float normals[3] = {0.017429193899782133f, 0.01750700280112045f, 0.01712475383166367f};
+
     auto pretreat          = std::shared_ptr<MNN::CV::ImageProcess>(
-        MNN::CV::ImageProcess::create(MNN::CV::RGBA, MNN::CV::BGR, means, 3, normals, 3));
+                                                                    MNN::CV::ImageProcess::create(MNN::CV::RGBA, MNN::CV::BGR, means, 3, normals, 3));
     MNN::CV::Matrix matrix;
-    matrix.postScale((w - 1) / 223.0, (h - 1) / 223.0);
+    //    matrix.postScale((w - 1) / 223.0, (h - 1) / 223.0);
+    matrix.postScale(1.0f, 1.0f);
     pretreat->setMatrix(matrix);
-
+    
     auto input = _net->getSessionInput(_session, nullptr);
     pretreat->convert(rgba, w, h, 0, input);
     free(rgba);
-
+    
     return [super inferImage:image cycles:cycles];
 }
 
@@ -149,21 +161,21 @@ static int CompareElements(const LabeledElement *a, const LabeledElement *b) {
     CVPixelBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     int w                        = (int)CVPixelBufferGetWidth(pixelBuffer);
     int h                        = (int)CVPixelBufferGetHeight(pixelBuffer);
-
+    
     CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
     unsigned char *bgra = (unsigned char *)CVPixelBufferGetBaseAddress(pixelBuffer);
-
+    
     const float means[3]   = {103.94f, 116.78f, 123.68f};
     const float normals[3] = {0.017f, 0.017f, 0.017f};
     auto pretreat          = std::shared_ptr<MNN::CV::ImageProcess>(
-        MNN::CV::ImageProcess::create(MNN::CV::BGRA, MNN::CV::BGR, means, 3, normals, 3));
+                                                                    MNN::CV::ImageProcess::create(MNN::CV::BGRA, MNN::CV::BGR, means, 3, normals, 3));
     MNN::CV::Matrix matrix;
     matrix.postScale((w - 1) / 223.0, (h - 1) / 223.0);
     pretreat->setMatrix(matrix);
-
+    
     auto input = _net->getSessionInput(_session, nullptr);
     pretreat->convert(bgra, w, h, 0, input);
-
+    
     CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
     return [super inferBuffer:sampleBuffer];
 }
@@ -183,7 +195,7 @@ static int CompareElements(const LabeledElement *a, const LabeledElement *b) {
         NSString *lines   = [NSString stringWithContentsOfFile:labels encoding:NSUTF8StringEncoding error:nil];
         self.labels       = [lines componentsSeparatedByString:@"\n"];
         self.defaultImage = [UIImage imageNamed:@"squeezenet.jpg"];
-
+        
         NSString *model = [[NSBundle mainBundle] pathForResource:@"squeezenet_v1.1.caffe" ofType:@"mnn"];
         _net            = std::shared_ptr<MNN::Interpreter>(MNN::Interpreter::createFromFile(model.UTF8String));
     }
@@ -197,26 +209,26 @@ static int CompareElements(const LabeledElement *a, const LabeledElement *b) {
     {
         CGColorSpaceRef colorSpace = CGImageGetColorSpace(image.CGImage);
         CGContextRef contextRef    = CGBitmapContextCreate(rgba, w, h, 8, w * 4, colorSpace,
-                                                        kCGImageAlphaNoneSkipLast | kCGBitmapByteOrderDefault);
+                                                           kCGImageAlphaNoneSkipLast | kCGBitmapByteOrderDefault);
         CGContextDrawImage(contextRef, CGRectMake(0, 0, w, h), image.CGImage);
         CGContextRelease(contextRef);
     }
-
+    
     const float means[3] = {104.f, 117.f, 123.f};
     MNN::CV::ImageProcess::Config process;
     ::memcpy(process.mean, means, sizeof(means));
     process.sourceFormat = MNN::CV::RGBA;
     process.destFormat   = MNN::CV::BGR;
-
+    
     std::shared_ptr<MNN::CV::ImageProcess> pretreat(MNN::CV::ImageProcess::create(process));
     MNN::CV::Matrix matrix;
     matrix.postScale((w - 1) / 226.f, (h - 1) / 226.f);
     pretreat->setMatrix(matrix);
-
+    
     auto input = _net->getSessionInput(_session, nullptr);
     pretreat->convert(rgba, w, h, 0, input);
     free(rgba);
-
+    
     return [super inferImage:image cycles:cycles];
 }
 
@@ -224,24 +236,24 @@ static int CompareElements(const LabeledElement *a, const LabeledElement *b) {
     CVPixelBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     int w                        = (int)CVPixelBufferGetWidth(pixelBuffer);
     int h                        = (int)CVPixelBufferGetHeight(pixelBuffer);
-
+    
     CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
     unsigned char *bgra = (unsigned char *)CVPixelBufferGetBaseAddress(pixelBuffer);
-
+    
     const float means[3] = {104.f, 117.f, 123.f};
     MNN::CV::ImageProcess::Config process;
     ::memcpy(process.mean, means, sizeof(means));
     process.sourceFormat = MNN::CV::BGRA;
     process.destFormat   = MNN::CV::BGR;
-
+    
     std::shared_ptr<MNN::CV::ImageProcess> pretreat(MNN::CV::ImageProcess::create(process));
     MNN::CV::Matrix matrix;
     matrix.postScale((w - 1) / 226.f, (h - 1) / 226.f);
     pretreat->setMatrix(matrix);
-
+    
     auto input = _net->getSessionInput(_session, nullptr);
     pretreat->convert(bgra, w, h, 0, input);
-
+    
     CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
     return [super inferBuffer:sampleBuffer];
 }
@@ -271,13 +283,13 @@ static int CompareElements(const LabeledElement *a, const LabeledElement *b) {
 
 - (void)awakeFromNib {
     [super awakeFromNib];
-
+    
     self.forwardType    = MNN_FORWARD_CPU;
     self.threadCount    = 4;
     self.mobileNetV2    = [MobileNetV2 new];
     self.squeezeNetV1_1 = [SqueezeNetV1_1 new];
     self.currentModel   = self.mobileNetV2;
-
+    
     AVCaptureSession *session        = [[AVCaptureSession alloc] init];
     session.sessionPreset            = AVCaptureSessionPreset1280x720;
     AVCaptureDevice *device          = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
@@ -285,7 +297,7 @@ static int CompareElements(const LabeledElement *a, const LabeledElement *b) {
     AVCaptureVideoDataOutput *output = [[AVCaptureVideoDataOutput alloc] init];
     [output setSampleBufferDelegate:self queue:dispatch_queue_create("video_infer", 0)];
     output.videoSettings = @{(id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA)};
-
+    
     if ([session canAddInput:input]) {
         [session addInput:input];
     }
@@ -293,7 +305,7 @@ static int CompareElements(const LabeledElement *a, const LabeledElement *b) {
         [session addOutput:output];
     }
     [session commitConfiguration];
-
+    
     self.session = session;
 }
 
@@ -334,56 +346,56 @@ static int CompareElements(const LabeledElement *a, const LabeledElement *b) {
 - (IBAction)toggleModel {
     __weak typeof(self) weakify = self;
     UIAlertController *alert    = [UIAlertController alertControllerWithTitle:@"选择模型"
-                                                                   message:nil
-                                                            preferredStyle:UIAlertControllerStyleActionSheet];
+                                                                      message:nil
+                                                               preferredStyle:UIAlertControllerStyleActionSheet];
     [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     [alert addAction:[UIAlertAction actionWithTitle:@"MobileNet V2"
                                               style:UIAlertActionStyleDefault
                                             handler:^(UIAlertAction *action) {
-                                                __strong typeof(weakify) self = weakify;
-                                                self.modelItem.title          = action.title;
-                                                self.currentModel             = self.mobileNetV2;
-                                                if (!self.session.running) {
-                                                    self.imageView.image = self.currentModel.defaultImage;
-                                                }
-                                                [self refresh];
-                                            }]];
+        __strong typeof(weakify) self = weakify;
+        self.modelItem.title          = action.title;
+        self.currentModel             = self.mobileNetV2;
+        if (!self.session.running) {
+            self.imageView.image = self.currentModel.defaultImage;
+        }
+        [self refresh];
+    }]];
     [alert addAction:[UIAlertAction actionWithTitle:@"SqueezeNet V1.1"
                                               style:UIAlertActionStyleDefault
                                             handler:^(UIAlertAction *action) {
-                                                __strong typeof(weakify) self = weakify;
-                                                self.modelItem.title          = action.title;
-                                                self.currentModel             = self.squeezeNetV1_1;
-                                                if (!self.session.running) {
-                                                    self.imageView.image = self.currentModel.defaultImage;
-                                                }
-                                                [self refresh];
-                                            }]];
+        __strong typeof(weakify) self = weakify;
+        self.modelItem.title          = action.title;
+        self.currentModel             = self.squeezeNetV1_1;
+        if (!self.session.running) {
+            self.imageView.image = self.currentModel.defaultImage;
+        }
+        [self refresh];
+    }]];
     [self presentViewController:alert animated:YES completion:nil];
 }
 
 - (IBAction)toggleMode {
     __weak typeof(self) weakify = self;
     UIAlertController *alert    = [UIAlertController alertControllerWithTitle:@"运行模式"
-                                                                   message:nil
-                                                            preferredStyle:UIAlertControllerStyleActionSheet];
+                                                                      message:nil
+                                                               preferredStyle:UIAlertControllerStyleActionSheet];
     [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     [alert addAction:[UIAlertAction actionWithTitle:@"CPU"
                                               style:UIAlertActionStyleDefault
                                             handler:^(UIAlertAction *action) {
-                                                __strong typeof(weakify) self = weakify;
-                                                self.forwardItem.title        = action.title;
-                                                self.forwardType              = MNN_FORWARD_CPU;
-                                                [self refresh];
-                                            }]];
+        __strong typeof(weakify) self = weakify;
+        self.forwardItem.title        = action.title;
+        self.forwardType              = MNN_FORWARD_CPU;
+        [self refresh];
+    }]];
     [alert addAction:[UIAlertAction actionWithTitle:@"Metal"
                                               style:UIAlertActionStyleDefault
                                             handler:^(UIAlertAction *action) {
-                                                __strong typeof(weakify) self = weakify;
-                                                self.forwardItem.title        = action.title;
-                                                self.forwardType              = MNN_FORWARD_METAL;
-                                                [self refresh];
-                                            }]];
+        __strong typeof(weakify) self = weakify;
+        self.forwardItem.title        = action.title;
+        self.forwardType              = MNN_FORWARD_METAL;
+        [self refresh];
+    }]];
     [self presentViewController:alert animated:YES completion:nil];
 }
 
@@ -439,12 +451,12 @@ static int CompareElements(const LabeledElement *a, const LabeledElement *b) {
 
 #pragma mark AVCaptureAudioDataOutputSampleBufferDelegate
 - (void)captureOutput:(AVCaptureOutput *)output
-    didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
-           fromConnection:(AVCaptureConnection *)connection {
+didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
+       fromConnection:(AVCaptureConnection *)connection {
     CIImage *ci        = [[CIImage alloc] initWithCVPixelBuffer:CMSampleBufferGetImageBuffer(sampleBuffer)];
     CIContext *context = [[CIContext alloc] init];
     CGImageRef cg      = [context createCGImage:ci fromRect:ci.extent];
-
+    
     UIImageOrientation orientaion;
     switch (connection.videoOrientation) {
         case AVCaptureVideoOrientationPortrait:
@@ -462,11 +474,11 @@ static int CompareElements(const LabeledElement *a, const LabeledElement *b) {
         default:
             break;
     }
-
+    
     UIImage *image = [UIImage imageWithCGImage:cg scale:1.f orientation:orientaion];
     CGImageRelease(cg);
     NSString *result = [_currentModel inferBuffer:sampleBuffer];
-
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         if (self.session.running) {
             self.imageView.image  = image;

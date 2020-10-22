@@ -71,7 +71,8 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
              */
             final MNNImageProcess.Config config = new MNNImageProcess.Config();
             // normalization params
-            config.mean = new float[]{103.94f, 116.78f, 123.68f};
+//            config.mean = new float[]{103.94f, 116.78f, 123.68f};
+            config.mean = new float[]{123.68f, 116.78f, 103.94f};
             config.normal = new float[]{0.017f, 0.017f, 0.017f};
             // input data format
             config.dest = MNNImageProcess.Format.BGR;
@@ -204,6 +205,7 @@ public class ImageActivity extends AppCompatActivity implements View.OnClickList
 
         // get input tensor
         mInputTensor = mSession.getInput(null);
+
     }
 
     @Override
