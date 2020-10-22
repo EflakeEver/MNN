@@ -156,7 +156,6 @@ public class KcDemoActivity extends AppCompatActivity {
 //        imgData.postScale(1.0f, 1.0f);
         imgData.invert(imgData);
         MNNImageProcess.convertBitmap(bmp, mInputTensor, dataConfig, imgData);
-        mInputTensor.getFloatData()
         File file2 = new File(Environment.getExternalStorageDirectory() + File.separator + "dest2.bmp");
         saveBitmap(bmp,file2);
         //bmp 224x224
